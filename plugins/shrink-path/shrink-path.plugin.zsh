@@ -10,6 +10,7 @@
 #
 #   -f, --fish       fish simulation, equivalent to -l -s -t.
 #   -g, --glob       Add asterisk to allow globbing of shrunk path (equivalent to -e "*")
+#   -r, --first      Print the first directory's full name.
 #   -l, --last       Print the last directory's full name.
 #   -s, --short      Truncate directory names to the number of characters given by -#. Without
 #                    -s, names are truncated without making them ambiguous.
@@ -39,6 +40,7 @@ shrink_path () {
         setopt rc_quotes null_glob
 
         typeset -i lastfull=0
+        typeset -i firstfull=0
         typeset -i short=0
         typeset -i tilde=0
         typeset -i named=0
@@ -56,6 +58,7 @@ shrink_path () {
                 tilde=1
                 named=1
         fi
+        zstyle -t ':prompt:shrink_path' first && firstfull=1
         zstyle -t ':prompt:shrink_path' last && lastfull=1
         zstyle -t ':prompt:shrink_path' short && short=1
         zstyle -t ':prompt:shrink_path' tilde && tilde=1
@@ -78,6 +81,7 @@ shrink_path () {
                                 print 'Usage: shrink_path [-f -l -s -t] [directory]'
                                 print ' -f, --fish      fish-simulation, like -l -s -t'
                                 print ' -g, --glob      Add asterisk to allow globbing of shrunk path (equivalent to -e "*")'
+                                print ' -r, --first     Print the first directory''s full name'
                                 print ' -l, --last      Print the last directory''s full name'
                                 print ' -s, --short     Truncate directory names to the number of characters given by -#. Without'
                                 print '                 -s, names are truncated without making them ambiguous.'
@@ -93,6 +97,7 @@ shrink_path () {
                                 print '  zstyle :prompt:shrink_path fish yes'
                                 return 0
                         ;;
+                        -r|--first) firstfull=1 ;;
                         -l|--last) lastfull=1 ;;
                         -s|--short) short=1 ;;
                         -t|--tilde) tilde=1 ;;
@@ -146,6 +151,11 @@ shrink_path () {
                         shift tree
                 } else {
                         cd -q /
+                }
+                if (( firstfull )) {
+                        cd -q $tree[1]
+                        result+="/$tree[1]"
+                        shift tree
                 }
                 for dir in $tree; {
                         if (( lastfull && $#tree == 1 )) {
