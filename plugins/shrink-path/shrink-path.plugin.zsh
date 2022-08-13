@@ -20,6 +20,7 @@
 #                    ellipsis character(s) (defaulting to 1).
 #   -e SYMBOL        Postfix symbol(s) to indicate that a directory name had been truncated.
 #   -q, --quote      Quote special characters in the shrunk path
+#   -x, --expand     Print the full path. This takes precedence over the other options
 #
 # The long options can also be set via zstyle, like
 #   zstyle :prompt:shrink_path fish yes
