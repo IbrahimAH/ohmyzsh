@@ -152,7 +152,7 @@ shrink_path () {
                 } else {
                         cd -q /
                 }
-                if (( firstfull )) {
+                if (( firstfull && $#tree > 0 )) {
                         cd -q $tree[1]
                         result+="/$tree[1]"
                         shift tree
